@@ -82,4 +82,15 @@ class MasterDataFrontendTest extends TestCase
         $response->assertSee('modalCancelOpen', false);
         $response->assertSee('/api/v1/operasional/pesanan-online', false);
     }
+
+    public function test_promo_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/promo');
+
+        $response->assertStatus(200);
+        $response->assertSee('promoManagement()', false);
+        $response->assertSee('modalOpen', false);
+        $response->assertSee('modalDeleteOpen', false);
+        $response->assertSee('/api/v1/operasional/promo-diskon', false);
+    }
 }
