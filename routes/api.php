@@ -3,8 +3,10 @@
 use App\Http\Controllers\Api\MasterData\ProdukController;
 use App\Http\Controllers\Api\MasterData\StokController;
 use App\Http\Controllers\Api\Operasional\KasirController;
+use App\Http\Controllers\Api\Operasional\PelangganController;
 use App\Http\Controllers\Api\Operasional\PesanOnlineController;
 use App\Http\Controllers\Api\Operasional\PromoDiskonController;
+use App\Http\Controllers\Api\Operasional\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +55,23 @@ Route::prefix('v1')->group(function () {
             Route::put('/{id}', [PromoDiskonController::class, 'update']);
             Route::delete('/{id}', [PromoDiskonController::class, 'destroy']);
             Route::patch('/{id}/toggle-status', [PromoDiskonController::class, 'toggleStatus']);
+        });
+
+        Route::prefix('pelanggan')->group(function () {
+            Route::get('/', [PelangganController::class, 'index']);
+            Route::post('/', [PelangganController::class, 'store']);
+            Route::get('/{id}', [PelangganController::class, 'show']);
+            Route::put('/{id}', [PelangganController::class, 'update']);
+            Route::delete('/{id}', [PelangganController::class, 'destroy']);
+        });
+
+        Route::prefix('supplier')->group(function () {
+            Route::get('/categories', [SupplierController::class, 'categories']);
+            Route::get('/', [SupplierController::class, 'index']);
+            Route::post('/', [SupplierController::class, 'store']);
+            Route::get('/{id}', [SupplierController::class, 'show']);
+            Route::put('/{id}', [SupplierController::class, 'update']);
+            Route::delete('/{id}', [SupplierController::class, 'destroy']);
         });
     });
 });

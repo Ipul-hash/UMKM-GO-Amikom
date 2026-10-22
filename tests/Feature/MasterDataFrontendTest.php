@@ -93,4 +93,26 @@ class MasterDataFrontendTest extends TestCase
         $response->assertSee('modalDeleteOpen', false);
         $response->assertSee('/api/v1/operasional/promo-diskon', false);
     }
+
+    public function test_customers_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/customers');
+
+        $response->assertStatus(200);
+        $response->assertSee('customerManagement()', false);
+        $response->assertSee('modalOpen', false);
+        $response->assertSee('modalDetailOpen', false);
+        $response->assertSee('/api/v1/operasional/pelanggan', false);
+    }
+
+    public function test_suppliers_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/suppliers');
+
+        $response->assertStatus(200);
+        $response->assertSee('supplierManagement()', false);
+        $response->assertSee('modalOpen', false);
+        $response->assertSee('modalPoOpen', false);
+        $response->assertSee('/api/v1/operasional/supplier', false);
+    }
 }
