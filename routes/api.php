@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\MasterData\StokController;
 use App\Http\Controllers\Api\Operasional\KaryawanController;
 use App\Http\Controllers\Api\Operasional\KasirController;
 use App\Http\Controllers\Api\Operasional\PelangganController;
+use App\Http\Controllers\Api\Operasional\PengaturanController;
 use App\Http\Controllers\Api\Operasional\PesanOnlineController;
 use App\Http\Controllers\Api\Operasional\PromoDiskonController;
 use App\Http\Controllers\Api\Operasional\SupplierController;
@@ -85,6 +86,13 @@ Route::prefix('v1')->group(function () {
             Route::put('/{id}', [KaryawanController::class, 'update']);
             Route::delete('/{id}', [KaryawanController::class, 'destroy']);
             Route::post('/{id}/assign-shift', [KaryawanController::class, 'assignShift']);
+        });
+
+        Route::prefix('pengaturan')->group(function () {
+            Route::get('/', [PengaturanController::class, 'show']);
+            Route::post('/', [PengaturanController::class, 'update']);
+            Route::put('/', [PengaturanController::class, 'update']);
+            Route::post('/upload-logo', [PengaturanController::class, 'uploadLogo']);
         });
     });
 

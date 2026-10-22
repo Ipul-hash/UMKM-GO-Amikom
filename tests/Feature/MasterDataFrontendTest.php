@@ -148,4 +148,14 @@ class MasterDataFrontendTest extends TestCase
         $response->assertSee('/api/v1/laporan/penjualan', false);
         $response->assertSee('/api/v1/laporan/penjualan/export-csv', false);
     }
+
+    public function test_settings_page_renders_with_alpine_and_tabs(): void
+    {
+        $response = $this->get('/admin/settings');
+
+        $response->assertStatus(200);
+        $response->assertSee('settingsManagement()', false);
+        $response->assertSee('activeTab', false);
+        $response->assertSee('/api/v1/operasional/pengaturan', false);
+    }
 }

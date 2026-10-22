@@ -34,6 +34,7 @@ class Store extends Model
         'latitude',
         'longitude',
         'opening_hours',
+        'settings',
         'verification_documents',
         'verified_at',
     ];
@@ -44,6 +45,7 @@ class Store extends Model
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'opening_hours' => 'array',
+            'settings' => 'array',
             'verification_documents' => 'array',
             'verified_at' => 'datetime',
         ];
