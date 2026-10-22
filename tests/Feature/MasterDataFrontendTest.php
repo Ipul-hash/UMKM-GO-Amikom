@@ -70,4 +70,16 @@ class MasterDataFrontendTest extends TestCase
         $response->assertSee('printable-thermal-receipt', false);
         $response->assertSee('/api/v1/operasional/kasir', false);
     }
+
+    public function test_online_orders_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/orders');
+
+        $response->assertStatus(200);
+        $response->assertSee('ordersManagement()', false);
+        $response->assertSee('modalShipOpen', false);
+        $response->assertSee('modalDetailOpen', false);
+        $response->assertSee('modalCancelOpen', false);
+        $response->assertSee('/api/v1/operasional/pesanan-online', false);
+    }
 }

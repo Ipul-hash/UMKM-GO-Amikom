@@ -35,12 +35,10 @@ class KasirController extends Controller
             $vq->where('is_active', true)->orderBy('price', 'asc');
         }])->where('status', 'active');
 
-        // Filter: Store
         if ($request->filled('store_id')) {
             $query->where('store_id', $request->query('store_id'));
         }
 
-        // Filter: Category
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->query('category_id'));
         } elseif ($request->filled('category_slug') && $request->query('category_slug') !== 'all') {
