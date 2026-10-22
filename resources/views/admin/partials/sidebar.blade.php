@@ -1,6 +1,6 @@
 <aside class="w-64 bg-[#0D1527] text-slate-400 flex flex-col flex-shrink-0 self-stretch min-h-screen select-none border-r border-slate-800/40">
     <!-- Brand Logo Area -->
-    <div class="h-20 flex items-center px-6 gap-3">
+    <a href="{{ route('admin.dashboard') }}" class="h-20 flex items-center px-6 gap-3">
         <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/30">
             <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M4 6V4h16v2H4zm1 3h14l-1 12H6L5 9zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"></path>
@@ -9,7 +9,7 @@
         <div class="flex items-center text-white font-extrabold text-xl tracking-tight">
             UMKM<span class="text-blue-500">Go</span>
         </div>
-    </div>
+    </a>
 
     <!-- Navigation Menu Items -->
     <div class="px-4 py-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
@@ -17,10 +17,10 @@
     </div>
 
     <nav class="flex-1 px-3 space-y-1 pb-8">
-        <!-- Active Item: Dashboard -->
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold shadow-sm transition-all">
+        <!-- Item: Dashboard -->
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-all">
             <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-slate-400' }}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <rect height="7" rx="1.5" width="7" x="3" y="3"></rect>
                     <rect height="7" rx="1.5" width="7" x="14" y="3"></rect>
                     <rect height="7" rx="1.5" width="7" x="14" y="14"></rect>
@@ -31,7 +31,7 @@
         </a>
 
         <!-- Item: POS / Kasir -->
-        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium transition-colors">
+        <a href="{{ route('admin.pos') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.pos') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <rect height="16" rx="2" width="20" x="2" y="4"></rect>
                 <path d="M7 15h10M2 9.5h20"></path>
@@ -40,7 +40,7 @@
         </a>
 
         <!-- Item: Produk -->
-        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium transition-colors">
+        <a href="{{ route('admin.products') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.products') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
                 <path d="m3.3 7 8.7 5 8.7-5M12 22V12"></path>
@@ -49,7 +49,7 @@
         </a>
 
         <!-- Item: Inventory -->
-        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium transition-colors">
+        <a href="{{ route('admin.inventory') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.inventory') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4M5 21V10.85M19 21V10.85"></path>
             </svg>
@@ -57,7 +57,7 @@
         </a>
 
         <!-- Item: Pesanan Online -->
-        <a href="#" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium transition-colors">
+        <a href="{{ route('admin.orders') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.orders') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <div class="flex items-center gap-3">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
@@ -71,7 +71,7 @@
         </a>
 
         <!-- Item: Keuangan -->
-        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium transition-colors">
+        <a href="{{ route('admin.finance') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.finance') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <rect height="14" rx="2" width="20" x="2" y="5"></rect>
                 <line x1="2" x2="22" y1="10" y2="10"></line>
@@ -80,7 +80,7 @@
         </a>
 
         <!-- Item: Pelanggan -->
-        <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium transition-colors">
+        <a href="{{ route('admin.customers') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.customers') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>

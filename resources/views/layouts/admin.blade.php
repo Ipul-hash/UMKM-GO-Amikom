@@ -68,23 +68,8 @@
         @include('admin.partials.topbar')
         <!-- END: Topbar -->
 
-        <!-- BEGIN: Dashboard Content Body -->
-        <main class="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
-            @yield('content')
-
-            <!-- BEGIN: Footer Sync Info -->
-            <footer class="pt-4 pb-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span>Data tersinkron otomatis · Terakhir diperbarui {{ $lastSyncTime ?? '09:30 WIB' }}</span>
-                </div>
-                <div>
-                    Semua nominal dalam Rupiah (IDR)
-                </div>
-            </footer>
-            <!-- END: Footer Sync Info -->
-        </main>
-        <!-- END: Dashboard Content Body -->
+        <!-- Content Slot -->
+        @yield('content')
 
     </div>
     <!-- END: Main Viewport Wrapper -->

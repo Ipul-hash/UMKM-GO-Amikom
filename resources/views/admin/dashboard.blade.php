@@ -3,6 +3,7 @@
 @section('title', 'UMKMGo - Dashboard Admin')
 
 @section('content')
+<main class="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
     <!-- Header Title & Date Pill -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -464,4 +465,7 @@
         </div>
     </section>
     <!-- END: Row 3 -->
+
+    @include('admin.partials.footer')
+</main>
 @endsection

@@ -8,20 +8,33 @@ use Illuminate\View\View;
 class DashboardController extends Controller
 {
     /**
-     * Display the Admin Dashboard with dummy data.
+     * Shared common data across admin pages.
+     */
+    protected function getSharedData(): array
+    {
+        return [
+            'currentStore' => [
+                'name' => 'Toko Kopi & Fashion Andi',
+                'status' => 'active',
+            ],
+            'currentUser' => [
+                'name' => 'Adam Bagas',
+                'role' => 'Owner',
+                'initials' => 'AB',
+            ],
+            'newOrders' => [
+                'total_count' => 3,
+            ],
+            'lastSyncTime' => '09:30 WIB',
+        ];
+    }
+
+    /**
+     * Display the Admin Dashboard.
      */
     public function index(): View
     {
-        $currentStore = [
-            'name' => 'Toko Kopi & Fashion Andi',
-            'status' => 'active',
-        ];
-
-        $currentUser = [
-            'name' => 'Adam Bagas',
-            'role' => 'Owner',
-            'initials' => 'AB',
-        ];
+        $shared = $this->getSharedData();
 
         $kpis = [
             'revenue_today' => [
@@ -193,11 +206,8 @@ class DashboardController extends Controller
         ];
 
         $currentDate = 'Hari ini, 20 Okt 2026';
-        $lastSyncTime = '09:30 WIB';
 
-        return view('admin.dashboard', compact(
-            'currentStore',
-            'currentUser',
+        return view('admin.dashboard', array_merge($shared, compact(
             'kpis',
             'bestSeller',
             'newOrders',
@@ -205,8 +215,55 @@ class DashboardController extends Controller
             'quickPosProducts',
             'productsSummary',
             'salesReport',
-            'currentDate',
-            'lastSyncTime'
-        ));
+            'currentDate'
+        )));
+    }
+
+    /**
+     * Display POS / Kasir Screen.
+     */
+    public function pos(): View
+    {
+        return view('admin.pos', $this->getSharedData());
+    }
+
+    /**
+     * Display Inventory Screen.
+     */
+    public function inventory(): View
+    {
+        return view('admin.inventory', $this->getSharedData());
+    }
+
+    /**
+     * Display Products Screen.
+     */
+    public function products(): View
+    {
+        return view('admin.products', $this->getSharedData());
+    }
+
+    /**
+     * Display Finance / Keuangan Screen.
+     */
+    public function finance(): View
+    {
+        return view('admin.finance', $this->getSharedData());
+    }
+
+    /**
+     * Display Customers / Pelanggan Screen.
+     */
+    public function customers(): View
+    {
+        return view('admin.customers', $this->getSharedData());
+    }
+
+    /**
+     * Display Online Orders / Pesanan Online Screen.
+     */
+    public function orders(): View
+    {
+        return view('admin.orders', $this->getSharedData());
     }
 }

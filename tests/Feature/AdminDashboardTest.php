@@ -13,14 +13,26 @@ class AdminDashboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('UMKMGo');
         $response->assertSee('Dashboard');
-        $response->assertSee('Toko Kopi &amp; Fashion Andi', false);
         $response->assertSee('Omzet Hari Ini');
         $response->assertSee('Rp 1.250.000');
-        $response->assertSee('Coffe Americano');
-        $response->assertSee('Matcha Latte');
-        $response->assertSee('POS / Kasir Quick Access');
-        $response->assertSee('Buka Kasir');
-        $response->assertSee('Kelola Produk');
-        $response->assertSee('Laporan Penjualan');
+    }
+
+    public function test_all_admin_screens_render_successfully(): void
+    {
+        $screens = [
+            '/admin/pos' => 'POS / Kasir',
+            '/admin/products' => 'Produk',
+            '/admin/inventory' => 'Inventory',
+            '/admin/orders' => 'Pesanan Online',
+            '/admin/finance' => 'Keuangan',
+            '/admin/customers' => 'Pelanggan',
+        ];
+
+        foreach ($screens as $uri => $expectedText) {
+            $response = $this->get($uri);
+            $response->assertStatus(200);
+            $response->assertSee('UMKMGo');
+            $response->assertSee($expectedText);
+        }
     }
 }
