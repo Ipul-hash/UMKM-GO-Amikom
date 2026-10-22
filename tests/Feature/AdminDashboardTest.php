@@ -2,13 +2,38 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class AdminDashboardTest extends TestCase
 {
-    public function test_admin_dashboard_renders_successfully(): void
+    use RefreshDatabase;
+
+    protected User $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create([
+            'role' => 'seller_owner',
+            'status' => 'active',
+        ]);
+    }
+
+    public function test_unauthenticated_user_is_redirected_to_login(): void
     {
         $response = $this->get('/');
+        $response->assertRedirect(route('login'));
+
+        $screenResponse = $this->get('/admin/products');
+        $screenResponse->assertRedirect(route('login'));
+    }
+
+    public function test_admin_dashboard_renders_successfully(): void
+    {
+        $response = $this->actingAs($this->user)->get('/');
 
         $response->assertStatus(200);
         $response->assertSee('UMKMGo');
@@ -34,7 +59,7 @@ class AdminDashboardTest extends TestCase
         ];
 
         foreach ($screens as $uri => $expectedText) {
-            $response = $this->get($uri);
+            $response = $this->actingAs($this->user)->get($uri);
             $response->assertStatus(200);
             $response->assertSee('UMKMGo');
             $response->assertSee($expectedText);

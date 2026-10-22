@@ -138,6 +138,7 @@
                     <tr class="border-t border-b border-slate-100 bg-[#fafafa]/50 text-[11px] font-medium text-slate-500 uppercase tracking-wider">
                         <th class="py-3 px-6">Nama Karyawan</th>
                         <th class="py-3 px-6">Peran / Jabatan</th>
+                        <th class="py-3 px-6">Hak Akses (RBAC)</th>
                         <th class="py-3 px-6">Shift Kerja</th>
                         <th class="py-3 px-6">No. WhatsApp</th>
                         <th class="py-3 px-6">Status</th>
@@ -161,6 +162,14 @@
                             </td>
                             <td class="py-4 px-6 whitespace-nowrap text-slate-600 font-normal" x-text="emp.role">
                                 Kasir Utama
+                            </td>
+                            <td class="py-4 px-6 whitespace-nowrap text-xs">
+                                <template x-if="emp.role_key === 'seller_owner'">
+                                    <span class="font-bold text-blue-600">Full Access</span>
+                                </template>
+                                <template x-if="emp.role_key !== 'seller_owner'">
+                                    <span class="font-medium text-slate-700" x-text="(emp.permissions ? emp.permissions.length : 0) + ' Hak Akses'"></span>
+                                </template>
                             </td>
                             <td class="py-4 px-6 whitespace-nowrap">
                                 <div class="flex flex-col">
@@ -220,34 +229,39 @@
     <div x-show="showFormModal" 
          class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/40"
          style="display: none;">
-        <div @click.away="showFormModal = false" class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-                <h3 class="text-base font-bold text-slate-900" x-text="isEditing ? 'Edit Karyawan' : 'Tambah Karyawan Baru'"></h3>
+        <div @click.away="showFormModal = false" class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 flex-shrink-0">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900" x-text="isEditing ? 'Edit Karyawan' : 'Tambah Karyawan Baru'"></h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Isi biodata staf dan atur hak akses custom per fitur</p>
+                </div>
                 <button @click="showFormModal = false" class="text-slate-400 hover:text-slate-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                 </button>
             </div>
 
-            <form @submit.prevent="saveEmployee()" class="space-y-4 mt-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
-                    <input type="text" x-model="form.full_name" required class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Contoh: Budi Pratama">
+            <form @submit.prevent="saveEmployee()" class="space-y-4 mt-4 overflow-y-auto pr-1 flex-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
+                        <input type="text" x-model="form.full_name" required class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Contoh: Budi Pratama">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Email *</label>
+                        <input type="email" x-model="form.email" required class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="budi@umkmgo.id">
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Email *</label>
-                    <input type="email" x-model="form.email" required class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="budi@umkmgo.id">
-                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">No. WhatsApp</label>
+                        <input type="text" x-model="form.phone" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="081234567890">
+                    </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">No. WhatsApp</label>
-                    <input type="text" x-model="form.phone" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="081234567890">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Peran / Jabatan *</label>
-                        <select x-model="form.role" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <select x-model="form.role" @change="onRoleChange()" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             <option value="cashier">Kasir Utama</option>
                             <option value="seller_staff">Staf Operasional</option>
                             <option value="manager">Manajer Toko</option>
@@ -263,20 +277,167 @@
                     </div>
                 </div>
 
-                <div x-show="!isEditing">
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Password Akses</label>
-                    <input type="password" x-model="form.password" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Minimal 6 karakter">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div x-show="!isEditing">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Password Akses</label>
+                        <input type="password" x-model="form.password" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Minimal 6 karakter">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Status Karyawan</label>
+                        <select x-model="form.is_active" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option :value="true">Aktif</option>
+                            <option :value="false">Nonaktif</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Status Karyawan</label>
-                    <select x-model="form.is_active" class="w-full px-3 py-2 text-[13px] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option :value="true">Aktif</option>
-                        <option :value="false">Nonaktif</option>
-                    </select>
+                <!-- Custom Permission Matrix (RBAC) -->
+                <div class="pt-4 border-t border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-900">Custom Permission Matrix (Hak Akses Granular)</label>
+                            <p class="text-[11px] text-slate-500">Centang izin fitur sesuai alur panel admin UMKM GO</p>
+                        </div>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200" x-text="form.permissions.length + ' Izin Aktif'"></span>
+                    </div>
+
+                    <!-- Preset Pills -->
+                    <div class="flex flex-wrap items-center gap-1.5 mb-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                        <span class="text-[11px] font-bold text-slate-500 mr-1">Preset:</span>
+                        <button type="button" @click="applyPreset('cashier')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition-colors">
+                            Kasir
+                        </button>
+                        <button type="button" @click="applyPreset('seller_staff')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition-colors">
+                            Staf Gudang
+                        </button>
+                        <button type="button" @click="applyPreset('manager')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition-colors">
+                            Manajer
+                        </button>
+                        <button type="button" @click="selectAllPermissions()" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors ml-auto">
+                            Pilih Semua
+                        </button>
+                        <button type="button" @click="clearPermissions()" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors">
+                            Kosongkan
+                        </button>
+                    </div>
+
+                    <!-- Matrix Checkboxes Grouped by 3 Flows -->
+                    <div class="space-y-3">
+                        <!-- Flow 1 -->
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                                    Flow 1: Manajemen Produk & Stok
+                                </span>
+                                <span class="text-[10px] text-slate-400">Katalog, Varian, Inventaris</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('products.view')" @change="togglePermission('products.view')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Lihat Daftar Produk</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('products.manage')" @change="togglePermission('products.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Tambah & Edit Produk</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('products.delete')" @change="togglePermission('products.delete')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Hapus Produk</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('inventory.view')" @change="togglePermission('inventory.view')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Lihat Stok & Mutasi</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('inventory.manage')" @change="togglePermission('inventory.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Penyesuaian Stok (Opname)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Flow 2 -->
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                    Flow 2: Operasional Pesanan & Pengiriman
+                                </span>
+                                <span class="text-[10px] text-slate-400">Kasir, Pesanan Masuk, Ekspedisi</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('pos.access')" @change="togglePermission('pos.access')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Akses POS / Kasir</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('orders.view')" @change="togglePermission('orders.view')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Lihat Pesanan Masuk</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('orders.process')" @change="togglePermission('orders.process')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Proses & Siapkan Barang</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('orders.ship')" @change="togglePermission('orders.ship')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Atur Pengiriman & Resi</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('customers.view')" @change="togglePermission('customers.view')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Lihat Data Pelanggan</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('customers.manage')" @change="togglePermission('customers.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Kelola Data Pelanggan</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('promo.manage')" @change="togglePermission('promo.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Kelola Promo & Diskon</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('suppliers.manage')" @change="togglePermission('suppliers.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Kelola Mitra Supplier</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Flow 3 -->
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-purple-600"></span>
+                                    Flow 3: Penjualan & Laporan Toko
+                                </span>
+                                <span class="text-[10px] text-slate-400">Analitik, Buku Kas, Pengaturan</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('reports.view')" @change="togglePermission('reports.view')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Laporan Penjualan & Analitik</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('finance.view')" @change="togglePermission('finance.view')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Lihat Buku Kas & Keuangan</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('finance.manage')" @change="togglePermission('finance.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Kelola Transaksi Kas</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('employees.manage')" @change="togglePermission('employees.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Kelola Karyawan & RBAC</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-white transition-colors">
+                                    <input type="checkbox" :checked="form.permissions.includes('settings.manage')" @change="togglePermission('settings.manage')" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span>Pengaturan Toko & Profil</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+                <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100 flex-shrink-0">
                     <button type="button" @click="showFormModal = false" class="px-4 py-2 text-[13px] font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Batal</button>
                     <button type="submit" :disabled="loading" class="px-5 py-2 text-[13px] font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm disabled:opacity-50">
                         <span x-text="loading ? 'Menyimpan...' : 'Simpan Karyawan'"></span>
@@ -368,7 +529,48 @@ function karyawanManagement() {
             role: 'cashier',
             shift: 'pagi',
             is_active: true,
+            permissions: [],
             password: 'password123'
+        },
+        presets: {
+            cashier: [
+                'pos.access', 'orders.view', 'customers.view', 'customers.manage', 'promo.manage'
+            ],
+            seller_staff: [
+                'products.view', 'products.manage', 'inventory.view', 'inventory.manage', 'orders.view', 'orders.process', 'orders.ship', 'suppliers.manage'
+            ],
+            manager: [
+                'products.view', 'products.manage', 'inventory.view', 'inventory.manage', 'pos.access', 'orders.view', 'orders.process', 'orders.ship', 'customers.view', 'customers.manage', 'promo.manage', 'suppliers.manage', 'reports.view', 'finance.view'
+            ]
+        },
+        allPermissions: [
+            'products.view', 'products.manage', 'products.delete', 'inventory.view', 'inventory.manage',
+            'pos.access', 'orders.view', 'orders.process', 'orders.ship', 'customers.view', 'customers.manage', 'promo.manage', 'suppliers.manage',
+            'reports.view', 'finance.view', 'finance.manage', 'employees.manage', 'settings.manage'
+        ],
+        onRoleChange() {
+            if (this.presets[this.form.role]) {
+                this.form.permissions = [...this.presets[this.form.role]];
+            }
+        },
+        applyPreset(role) {
+            if (this.presets[role]) {
+                this.form.permissions = [...this.presets[role]];
+            }
+        },
+        selectAllPermissions() {
+            this.form.permissions = [...this.allPermissions];
+        },
+        clearPermissions() {
+            this.form.permissions = [];
+        },
+        togglePermission(perm) {
+            const idx = this.form.permissions.indexOf(perm);
+            if (idx > -1) {
+                this.form.permissions.splice(idx, 1);
+            } else {
+                this.form.permissions.push(perm);
+            }
         },
         shiftForm: {
             shift: 'pagi',
@@ -421,6 +623,7 @@ function karyawanManagement() {
                 role: 'cashier',
                 shift: 'pagi',
                 is_active: true,
+                permissions: [...this.presets.cashier],
                 password: 'password123'
             };
             this.showFormModal = true;
@@ -435,6 +638,7 @@ function karyawanManagement() {
                 role: emp.role_key,
                 shift: emp.shift_key,
                 is_active: emp.is_active,
+                permissions: emp.permissions ? [...emp.permissions] : [...(this.presets[emp.role_key] || [])],
                 password: ''
             };
             this.showFormModal = true;

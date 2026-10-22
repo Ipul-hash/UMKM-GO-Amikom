@@ -39,6 +39,18 @@ class KaryawanController extends Controller
         };
     }
 
+    public function permissions(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'groups' => \App\Services\RbacService::permissionGroups(),
+                'presets' => \App\Services\RbacService::defaultPresets(),
+                'all_keys' => \App\Services\RbacService::allPermissionKeys(),
+            ],
+        ]);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $storeId = $this->resolveStoreId($request->query('store_id'));
@@ -93,6 +105,7 @@ class KaryawanController extends Controller
                 'role_key' => $member->role,
                 'shift' => $this->shiftLabel($shiftKey),
                 'shift_key' => $shiftKey,
+                'permissions' => $member->permissions ?? (\App\Services\RbacService::defaultPresets()[$member->role]['permissions'] ?? []),
                 'is_active' => (bool) $member->is_active,
                 'status_label' => $member->is_active ? 'Aktif' : 'Nonaktif',
                 'joined_at' => $member->joined_at?->format('d M Y'),
@@ -133,6 +146,7 @@ class KaryawanController extends Controller
             'shift' => 'nullable|string|in:pagi,malam',
             'is_active' => 'nullable|boolean',
             'password' => 'nullable|string|min:6',
+            'permissions' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -161,6 +175,7 @@ class KaryawanController extends Controller
             'store_id' => $storeId,
             'user_id' => $user->id,
             'role' => $request->input('role'),
+            'permissions' => $request->input('permissions'),
             'is_active' => $isActive,
             'joined_at' => now(),
         ]);
@@ -209,6 +224,7 @@ class KaryawanController extends Controller
                 'role_label' => $this->roleLabel($member->role),
                 'shift' => $shiftKey,
                 'shift_label' => $this->shiftLabel($shiftKey),
+                'permissions' => $member->permissions ?? (\App\Services\RbacService::defaultPresets()[$member->role]['permissions'] ?? []),
                 'is_active' => (bool) $member->is_active,
                 'joined_at' => $member->joined_at?->format('d M Y'),
             ],
@@ -236,6 +252,7 @@ class KaryawanController extends Controller
             'shift' => 'nullable|string|in:pagi,malam',
             'is_active' => 'nullable|boolean',
             'password' => 'nullable|string|min:6',
+            'permissions' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -264,10 +281,16 @@ class KaryawanController extends Controller
 
         $user->update($userUpdates);
 
-        StoreMember::where('store_id', $storeId)->where('user_id', $id)->update([
+        $memberUpdates = [
             'role' => $request->input('role'),
             'is_active' => $isActive,
-        ]);
+        ];
+
+        if ($request->has('permissions')) {
+            $memberUpdates['permissions'] = $request->input('permissions');
+        }
+
+        StoreMember::where('store_id', $storeId)->where('user_id', $id)->update($memberUpdates);
 
         return response()->json([
             'success' => true,

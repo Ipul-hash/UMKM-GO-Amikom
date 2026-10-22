@@ -46,6 +46,29 @@ class DatabaseSeeder extends Seeder
             'role' => 'cashier',
             'status' => 'active',
             'email_verified_at' => now(),
+            'notification_prefs' => ['shift' => 'pagi'],
+        ]);
+
+        $manager = User::create([
+            'full_name' => 'Rudi Manajer',
+            'email' => 'manajer@umkmgo.id',
+            'phone' => '081234567899',
+            'password_hash' => Hash::make('password'),
+            'role' => 'manager',
+            'status' => 'active',
+            'email_verified_at' => now(),
+            'notification_prefs' => ['shift' => 'pagi'],
+        ]);
+
+        $gudang = User::create([
+            'full_name' => 'Budi Gudang',
+            'email' => 'gudang@umkmgo.id',
+            'phone' => '081234567898',
+            'password_hash' => Hash::make('password'),
+            'role' => 'seller_staff',
+            'status' => 'active',
+            'email_verified_at' => now(),
+            'notification_prefs' => ['shift' => 'malam'],
         ]);
 
         $customer1 = User::create([
@@ -114,6 +137,16 @@ class DatabaseSeeder extends Seeder
             'store_id' => $store->id,
             'user_id' => $owner->id,
             'role' => 'seller_owner',
+            'permissions' => ['*'],
+            'is_active' => true,
+            'joined_at' => now(),
+        ]);
+
+        StoreMember::create([
+            'store_id' => $store->id,
+            'user_id' => $manager->id,
+            'role' => 'manager',
+            'permissions' => \App\Services\RbacService::defaultPresets()['manager']['permissions'],
             'is_active' => true,
             'joined_at' => now(),
         ]);
@@ -122,6 +155,16 @@ class DatabaseSeeder extends Seeder
             'store_id' => $store->id,
             'user_id' => $cashier->id,
             'role' => 'cashier',
+            'permissions' => \App\Services\RbacService::defaultPresets()['cashier']['permissions'],
+            'is_active' => true,
+            'joined_at' => now(),
+        ]);
+
+        StoreMember::create([
+            'store_id' => $store->id,
+            'user_id' => $gudang->id,
+            'role' => 'seller_staff',
+            'permissions' => \App\Services\RbacService::defaultPresets()['seller_staff']['permissions'],
             'is_active' => true,
             'joined_at' => now(),
         ]);

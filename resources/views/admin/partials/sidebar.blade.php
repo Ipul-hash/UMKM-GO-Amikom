@@ -36,6 +36,8 @@
             </div>
         </a>
 
+        <!-- Flow 2: Operasional Kasir & Pesanan -->
+        @permission('pos.access')
         <!-- Item: POS / Kasir -->
         <a href="{{ route('admin.pos') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.pos') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -44,24 +46,9 @@
             </svg>
             <span>POS / Kasir</span>
         </a>
+        @endpermission
 
-        <!-- Item: Produk -->
-        <a href="{{ route('admin.products') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.products') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
-                <path d="m3.3 7 8.7 5 8.7-5M12 22V12"></path>
-            </svg>
-            <span>Produk</span>
-        </a>
-
-        <!-- Item: Inventory -->
-        <a href="{{ route('admin.inventory') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.inventory') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                <path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4M5 21V10.85M19 21V10.85"></path>
-            </svg>
-            <span>Inventory</span>
-        </a>
-
+        @permission('orders.view')
         <!-- Item: Pesanan Online -->
         <a href="{{ route('admin.orders') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.orders') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <div class="flex items-center gap-3">
@@ -75,16 +62,42 @@
                 {{ $newOrders['total_count'] ?? 3 }}
             </span>
         </a>
+        @endpermission
 
-        <!-- Item: Keuangan -->
-        <a href="{{ route('admin.finance') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.finance') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
+        <!-- Flow 1: Master Katalog & Inventaris -->
+        @permission('products.view')
+        <!-- Item: Produk -->
+        <a href="{{ route('admin.products') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.products') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                <rect height="14" rx="2" width="20" x="2" y="5"></rect>
-                <line x1="2" x2="22" y1="10" y2="10"></line>
+                <path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+                <path d="m3.3 7 8.7 5 8.7-5M12 22V12"></path>
             </svg>
-            <span>Keuangan</span>
+            <span>Produk</span>
         </a>
+        @endpermission
 
+        @permission('inventory.view')
+        <!-- Item: Inventory -->
+        <a href="{{ route('admin.inventory') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.inventory') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4M5 21V10.85M19 21V10.85"></path>
+            </svg>
+            <span>Inventory</span>
+        </a>
+        @endpermission
+
+        @permission('suppliers.manage')
+        <!-- Item: Supplier -->
+        <a href="{{ route('admin.suppliers') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.suppliers') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <rect height="13" rx="2" width="16" x="1" y="6"></rect>
+                <path d="M16 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-1M5 19a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"></path>
+            </svg>
+            <span>Supplier</span>
+        </a>
+        @endpermission
+
+        @permission('customers.view')
         <!-- Item: Pelanggan -->
         <a href="{{ route('admin.customers') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.customers') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -94,7 +107,9 @@
             </svg>
             <span>Pelanggan</span>
         </a>
+        @endpermission
 
+        @permission('promo.manage')
         <!-- Item: Promo -->
         <a href="{{ route('admin.promo') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.promo') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -103,7 +118,21 @@
             </svg>
             <span>Promo</span>
         </a>
+        @endpermission
 
+        <!-- Flow 3: Laporan & Manajemen Toko -->
+        @permission('finance.view')
+        <!-- Item: Keuangan -->
+        <a href="{{ route('admin.finance') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.finance') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <rect height="14" rx="2" width="20" x="2" y="5"></rect>
+                <line x1="2" x2="22" y1="10" y2="10"></line>
+            </svg>
+            <span>Keuangan</span>
+        </a>
+        @endpermission
+
+        @permission('reports.view')
         <!-- Item: Laporan -->
         <a href="{{ route('admin.reports') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.reports') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -111,7 +140,9 @@
             </svg>
             <span>Laporan</span>
         </a>
+        @endpermission
 
+        @permission('employees.manage')
         <!-- Item: Karyawan -->
         <a href="{{ route('admin.employees') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.employees') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -120,16 +151,9 @@
             </svg>
             <span>Karyawan</span>
         </a>
+        @endpermission
 
-        <!-- Item: Supplier -->
-        <a href="{{ route('admin.suppliers') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.suppliers') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                <rect height="13" rx="2" width="16" x="1" y="6"></rect>
-                <path d="M16 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-1M5 19a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"></path>
-            </svg>
-            <span>Supplier</span>
-        </a>
-
+        @permission('settings.manage')
         <!-- Item: Pengaturan -->
         <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl {{ request()->routeIs('admin.settings') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-sm font-medium' }} transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -138,5 +162,6 @@
             </svg>
             <span>Pengaturan</span>
         </a>
+        @endpermission
     </nav>
 </aside>

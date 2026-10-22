@@ -324,7 +324,7 @@
                 <form @submit.prevent="submitShipOrder()" class="mt-4 space-y-4">
                     <!-- Recipient Destination Preview -->
                     <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
-                        <span class="block font-semibold text-slate-800 mb-0.5" x-text="'Penerima: ' + selectedOrder?.buyer_name"></span>
+                        <span class="block font-semibold text-slate-800 mb-0.5" x-text="selectedOrder ? ('Penerima: ' + (selectedOrder.buyer_name || '-')) : 'Penerima: -'"></span>
                         <p x-text="selectedOrder?.shipping_address?.address_line1 || 'Alamat tujuan pengiriman pelanggan'"></p>
                     </div>
 
@@ -403,7 +403,7 @@
                 <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-base font-bold text-slate-900" x-text="'Rincian ' + detailOrder?.order_number"></h3>
+                            <h3 class="text-base font-bold text-slate-900" x-text="detailOrder ? ('Rincian ' + detailOrder.order_number) : 'Rincian Pesanan'"></h3>
                             <span class="text-xs font-semibold capitalize" 
                                   :class="{
                                       'text-emerald-600': detailOrder?.status === 'pending' || detailOrder?.status === 'paid',
@@ -412,9 +412,9 @@
                                       'text-slate-600': detailOrder?.status === 'delivered',
                                       'text-rose-600': detailOrder?.status === 'cancelled'
                                   }"
-                                  x-text="detailOrder?.status"></span>
+                                  x-text="detailOrder?.status || ''"></span>
                         </div>
-                        <p class="text-xs text-slate-400 mt-0.5" x-text="'Waktu Pemesanan: ' + detailOrder?.placed_at"></p>
+                        <p class="text-xs text-slate-400 mt-0.5" x-text="detailOrder ? ('Waktu Pemesanan: ' + (detailOrder.placed_at || '-')) : ''"></p>
                     </div>
                     <button @click="modalDetailOpen = false" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -530,22 +530,25 @@
                  class="relative inline-block w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl border border-slate-100 my-8">
                 
                 <h3 class="text-base font-bold text-slate-900">Batalkan Pesanan Ini?</h3>
-                <p class="text-xs text-slate-500 mt-1">Pesanan <strong class="text-slate-800" x-text="selectedOrder?.order_number"></strong> akan dibatalkan dan stok produk akan otomatis dikembalikan ke inventaris.</p>
+                <p class="text-xs text-slate-500 mt-1">Pesanan <strong class="text-slate-800" x-text="selectedOrder ? selectedOrder.order_number : ''"></strong> akan dibatalkan dan stok produk akan otomatis dikembalikan ke inventaris.</p>
 
-                <div class="mt-4">
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Alasan Pembatalan</label>
-                    <input x-model="cancelReason" type="text" placeholder="Contoh: Stok barang habis, toko tutup..." class="w-full text-xs border border-slate-200 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-rose-500"/>
-                </div>
+                <form @submit.prevent="submitCancelOrder()">
+                    <div class="mt-4">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Alasan Pembatalan <span class="text-rose-500">*</span></label>
+                        <input x-model="cancelReason" required minlength="5" type="text" placeholder="Contoh: Stok barang habis, toko tutup..." class="w-full text-xs border border-slate-200 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-rose-500"/>
+                        <p class="text-[11px] text-slate-400 mt-1">Wajib diisi minimal 5 karakter sebagai catatan audit inventaris.</p>
+                    </div>
 
-                <div class="flex items-center justify-end gap-3 mt-6">
-                    <button @click="modalCancelOpen = false" type="button" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                        Batal
-                    </button>
-                    <button @click="submitCancelOrder()" :disabled="submitting" type="button" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-xs transition-colors">
-                        <span x-show="!submitting">Ya, Batalkan Pesanan</span>
-                        <span x-show="submitting">Memproses...</span>
-                    </button>
-                </div>
+                    <div class="flex items-center justify-end gap-3 mt-6">
+                        <button @click="modalCancelOpen = false" type="button" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
+                            Batal
+                        </button>
+                        <button :disabled="submitting || !cancelReason.trim() || cancelReason.trim().length < 5" type="submit" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-xs transition-colors disabled:opacity-50">
+                            <span x-show="!submitting">Ya, Batalkan Pesanan</span>
+                            <span x-show="submitting">Memproses...</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -760,7 +763,7 @@
             },
 
             async submitCancelOrder() {
-                if (!this.selectedOrder) return;
+                if (!this.selectedOrder || !this.cancelReason.trim()) return;
                 this.submitting = true;
                 try {
                     const res = await fetch(`/api/v1/operasional/pesanan-online/${this.selectedOrder.id}/cancel`, {

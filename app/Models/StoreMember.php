@@ -18,6 +18,7 @@ class StoreMember extends Model
         'store_id',
         'user_id',
         'role',
+        'permissions',
         'is_active',
         'joined_at',
     ];
@@ -25,6 +26,7 @@ class StoreMember extends Model
     protected function casts(): array
     {
         return [
+            'permissions' => 'array',
             'is_active' => 'boolean',
             'joined_at' => 'datetime',
         ];

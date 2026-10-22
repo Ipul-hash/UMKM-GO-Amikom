@@ -23,11 +23,26 @@ class DashboardController extends Controller
             $store = null;
         }
 
-        $ownerName = $store?->owner?->full_name ?? 'Adam Bagas';
-        $words = explode(' ', trim($ownerName));
+        $user = auth()->user() ?? $store?->owner ?? \App\Models\User::first();
+        $userName = $user?->full_name ?? $store?->owner?->full_name ?? 'Adam Bagas';
+        $words = explode(' ', trim($userName));
         $initials = count($words) >= 2 
             ? strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1))
-            : strtoupper(substr($ownerName, 0, 2));
+            : strtoupper(substr($userName, 0, 2));
+
+        $storeId = $store?->id;
+        $membership = $user && $storeId ? \App\Services\RbacService::getUserMembership($user, $storeId) : null;
+        $roleKey = $membership?->role ?? $user?->role ?? 'seller_owner';
+        $roleLabel = match ($roleKey) {
+            'seller_owner' => 'Owner / Pemilik',
+            'manager' => 'Manajer Toko',
+            'cashier' => 'Kasir Utama',
+            'seller_staff' => 'Staf Operasional',
+            default => ucfirst(str_replace('_', ' ', $roleKey)),
+        };
+
+        $userPermissions = $user ? \App\Services\RbacService::getPermissions($user, $storeId) : ['*'];
+        $isOwner = $user ? \App\Services\RbacService::isStoreOwner($user, $storeId) : true;
 
         $pendingOrders = 3;
         try {
@@ -46,9 +61,14 @@ class DashboardController extends Controller
                 'status' => $store?->status ?? 'active',
             ],
             'currentUser' => [
-                'name' => $ownerName,
-                'role' => 'Owner',
+                'id' => $user?->id,
+                'name' => $userName,
+                'email' => $user?->email,
+                'role' => $roleLabel,
+                'role_key' => $roleKey,
                 'initials' => $initials ?: 'AB',
+                'permissions' => $userPermissions,
+                'is_owner' => $isOwner,
             ],
             'newOrders' => [
                 'total_count' => $pendingOrders,

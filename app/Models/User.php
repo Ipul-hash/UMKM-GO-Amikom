@@ -114,4 +114,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProductFeedback::class, 'user_id');
     }
+
+    public function isStoreOwner(?string $storeId = null): bool
+    {
+        return \App\Services\RbacService::isStoreOwner($this, $storeId);
+    }
+
+    public function hasPermission(string $permission, ?string $storeId = null): bool
+    {
+        return \App\Services\RbacService::hasPermission($this, $permission, $storeId);
+    }
+
+    public function hasAnyPermission(array $permissions, ?string $storeId = null): bool
+    {
+        return \App\Services\RbacService::hasAnyPermission($this, $permissions, $storeId);
+    }
+
+    public function getStorePermissions(?string $storeId = null): array
+    {
+        return \App\Services\RbacService::getPermissions($this, $storeId);
+    }
 }

@@ -20,7 +20,11 @@ class MasterDataFrontendTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->create([
+            'role' => 'seller_owner',
+            'status' => 'active',
+        ]);
+        $this->actingAs($this->user);
         $this->store = Store::create([
             'owner_user_id' => $this->user->id,
             'name' => 'Toko Kopi Kenangan Amikom',
