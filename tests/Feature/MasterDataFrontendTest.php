@@ -58,4 +58,16 @@ class MasterDataFrontendTest extends TestCase
         $response->assertSee('/api/v1/master-data/stok', false);
         $response->assertSee('/api/v1/master-data/stok/summary', false);
     }
+
+    public function test_pos_cashier_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/pos');
+
+        $response->assertStatus(200);
+        $response->assertSee('posCashier()', false);
+        $response->assertSee('modalPaymentOpen', false);
+        $response->assertSee('modalReceiptOpen', false);
+        $response->assertSee('printable-thermal-receipt', false);
+        $response->assertSee('/api/v1/operasional/kasir', false);
+    }
 }

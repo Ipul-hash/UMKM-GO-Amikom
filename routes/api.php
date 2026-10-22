@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\MasterData\ProdukController;
 use App\Http\Controllers\Api\MasterData\StokController;
+use App\Http\Controllers\Api\Operasional\KasirController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,5 +26,16 @@ Route::prefix('v1')->group(function () {
         Route::get('/stok/summary', [StokController::class, 'summary']);
         Route::post('/stok/adjust', [StokController::class, 'adjust']);
         Route::get('/stok/movements', [StokController::class, 'movements']);
+    });
+
+    // Operasional Routes: POS / Kasir
+    Route::prefix('operasional')->group(function () {
+        Route::prefix('kasir')->group(function () {
+            Route::get('/catalog', [KasirController::class, 'catalog']);
+            Route::get('/customers', [KasirController::class, 'customers']);
+            Route::get('/shift', [KasirController::class, 'activeShift']);
+            Route::post('/checkout', [KasirController::class, 'checkout']);
+            Route::get('/receipt/{id}', [KasirController::class, 'receipt']);
+        });
     });
 });
