@@ -183,7 +183,6 @@
                             <th class="py-3.5 px-6" scope="col">Kategori</th>
                             <th class="py-3.5 px-6" scope="col">Stok Tersedia</th>
                             <th class="py-3.5 px-6" scope="col">Harga &amp; Nilai Aset</th>
-                            <th class="py-3.5 px-6" scope="col">Status</th>
                             <th class="py-3.5 px-6 text-right" scope="col">Aksi</th>
                         </tr>
                     </thead>
@@ -206,32 +205,10 @@
                                     </div>
                                 </td>
                                 <td class="py-3 px-6 text-slate-600" x-text="item.category_name"></td>
-                                <td class="py-3 px-6">
-                                    <span class="text-base font-bold" 
-                                          :class="{
-                                              'text-emerald-600': item.status === 'aman',
-                                              'text-amber-500': item.status === 'menipis',
-                                              'text-rose-600': item.status === 'habis'
-                                          }"
-                                          x-text="item.stock_quantity">
-                                    </span>
-                                    <span class="text-xs text-slate-400 font-normal ml-1">unit</span>
-                                </td>
+                                <td class="py-3 px-6 text-sm font-medium text-slate-800" x-text="(item.stock_quantity ?? 0) + ' unit'"></td>
                                 <td class="py-3 px-6">
                                     <div class="font-medium text-slate-800 text-xs" x-text="item.price_formatted"></div>
                                     <div class="text-[11px] text-slate-400 mt-0.5" x-text="'Aset: ' + item.asset_value_formatted"></div>
-                                </td>
-                                <td class="py-3 px-6">
-                                    <span :class="item.status_color" 
-                                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border">
-                                        <span class="w-1.5 h-1.5 rounded-full" 
-                                              :class="{
-                                                  'bg-emerald-500': item.status === 'aman',
-                                                  'bg-amber-500': item.status === 'menipis',
-                                                  'bg-rose-500': item.status === 'habis'
-                                              }"></span>
-                                        <span x-text="item.status_label"></span>
-                                    </span>
                                 </td>
                                 <td class="py-3 px-6 text-right">
                                     <div class="flex items-center justify-end gap-3 text-xs font-medium">
@@ -258,7 +235,7 @@
 
                         <!-- Empty State -->
                         <tr x-show="!loading && items.length === 0">
-                            <td colspan="6" class="py-12 text-center">
+                            <td colspan="5" class="py-12 text-center">
                                 <div class="max-w-sm mx-auto flex flex-col items-center">
                                     <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

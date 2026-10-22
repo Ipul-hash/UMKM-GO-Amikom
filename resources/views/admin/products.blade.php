@@ -99,7 +99,7 @@
                             <th class="py-4 px-6 font-semibold" scope="col">Nama Produk</th>
                             <th class="py-4 px-6 font-semibold" scope="col">Kategori</th>
                             <th class="py-4 px-6 font-semibold" scope="col">Harga Jual</th>
-                            <th class="py-4 px-6 font-semibold" scope="col">Total Stok</th>
+                            <th class="py-4 px-6 font-semibold" scope="col">Stok</th>
                             <th class="py-4 px-6 font-semibold" scope="col">Status</th>
                             <th class="py-4 px-6 font-semibold text-right" scope="col">Aksi</th>
                         </tr>
@@ -130,20 +130,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-6 font-semibold text-slate-800" x-text="product.price_formatted"></td>
-                                <td class="py-3.5 px-6">
-                                    <span :class="{
-                                        'text-emerald-700 bg-emerald-50 border-emerald-100': product.total_stock > 5,
-                                        'text-amber-700 bg-amber-50 border-amber-100': product.total_stock > 0 && product.total_stock <= 5,
-                                        'text-rose-700 bg-rose-50 border-rose-100': product.total_stock <= 0
-                                    }" class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border">
-                                        <span :class="{
-                                            'bg-emerald-600': product.total_stock > 5,
-                                            'bg-amber-500': product.total_stock > 0 && product.total_stock <= 5,
-                                            'bg-rose-600': product.total_stock <= 0
-                                        }" class="w-1.5 h-1.5 rounded-full"></span>
-                                        <span x-text="product.total_stock > 0 ? (product.total_stock + ' unit') : 'Habis'"></span>
-                                    </span>
-                                </td>
+                                <td class="py-3.5 px-6 text-sm font-medium text-slate-800" x-text="(product.total_stock || 0) + ' unit'"></td>
                                 <td class="py-3.5 px-6">
                                     <span :class="product.status === 'active' ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-slate-100 text-slate-600 border-slate-200'"
                                           class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border capitalize"
