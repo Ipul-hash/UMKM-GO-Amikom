@@ -309,12 +309,9 @@
                 </div>
 
                 <!-- Total Amount Banner -->
-                <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-4 my-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-medium text-blue-700">Total Tagihan:</span>
-                        <div class="text-2xl font-extrabold text-blue-900" x-text="formatRupiah(calculateGrandTotal())"></div>
-                    </div>
-                    <span class="text-xs font-semibold px-2.5 py-1 bg-blue-600 text-white rounded-lg shadow-xs" x-text="cart.length + ' Produk'"></span>
+                <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-4 my-4">
+                    <span class="text-xs font-medium text-blue-700">Total Tagihan:</span>
+                    <div class="text-2xl font-extrabold text-blue-900" x-text="formatRupiah(calculateGrandTotal())"></div>
                 </div>
 
                 <!-- Payment Method Tabs -->
