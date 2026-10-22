@@ -478,6 +478,11 @@ function settingsManagement() {
                     this.showNotification(json.message);
                     this.form = json.data;
                     this.logoError = false;
+                    if (this.form.name) {
+                        document.querySelectorAll('.store-brand-name').forEach(el => {
+                            el.textContent = this.form.name;
+                        });
+                    }
                 } else {
                     this.showNotification(json.message || 'Gagal menyimpan pengaturan', 'error');
                 }
@@ -517,6 +522,9 @@ function settingsManagement() {
                     this.form.logo_url = json.logo_url;
                     this.logoPreviewUrl = json.logo_url;
                     this.logoError = false;
+                    document.querySelectorAll('.store-brand-logo-container').forEach(el => {
+                        el.innerHTML = `<img src="${json.logo_url}" alt="Logo" class="w-full h-full object-cover">`;
+                    });
                     this.showNotification('Logo toko berhasil diperbarui');
                 } else {
                     this.showNotification(json.message || 'Gagal mengunggah logo', 'error');
@@ -532,6 +540,9 @@ function settingsManagement() {
             this.form.logo_url = '';
             this.logoPreviewUrl = '';
             this.logoError = false;
+            document.querySelectorAll('.store-brand-logo-container').forEach(el => {
+                el.innerHTML = `<svg class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24"><path d="M4 6V4h16v2H4zm1 3h14l-1 12H6L5 9zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"></path></svg>`;
+            });
             await this.saveSettings();
             this.showNotification('Logo toko berhasil dihapus');
         }

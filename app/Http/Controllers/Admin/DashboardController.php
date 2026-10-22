@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Store;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -12,20 +14,46 @@ class DashboardController extends Controller
      */
     protected function getSharedData(): array
     {
+        $store = null;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('stores')) {
+                $store = Store::with('owner')->first();
+            }
+        } catch (\Throwable $e) {
+            $store = null;
+        }
+
+        $ownerName = $store?->owner?->full_name ?? 'Adam Bagas';
+        $words = explode(' ', trim($ownerName));
+        $initials = count($words) >= 2 
+            ? strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1))
+            : strtoupper(substr($ownerName, 0, 2));
+
+        $pendingOrders = 3;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('orders')) {
+                $pendingOrders = Order::where('status', 'pending')->count();
+            }
+        } catch (\Throwable $e) {
+            $pendingOrders = 3;
+        }
+
         return [
             'currentStore' => [
-                'name' => 'Toko Kopi & Fashion Andi',
-                'status' => 'active',
+                'id' => $store?->id,
+                'name' => $store?->name ?? 'Toko Kopi & Fashion Andi',
+                'logo_url' => $store?->logo_url,
+                'status' => $store?->status ?? 'active',
             ],
             'currentUser' => [
-                'name' => 'Adam Bagas',
+                'name' => $ownerName,
                 'role' => 'Owner',
-                'initials' => 'AB',
+                'initials' => $initials ?: 'AB',
             ],
             'newOrders' => [
-                'total_count' => 3,
+                'total_count' => $pendingOrders,
             ],
-            'lastSyncTime' => '09:30 WIB',
+            'lastSyncTime' => now()->format('H:i') . ' WIB',
         ];
     }
 

@@ -1,10 +1,14 @@
 <header class="h-20 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between relative z-30 flex-shrink-0">
     <!-- Left Topbar Brand Icon -->
     <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M4 6V4h16v2H4zm1 3h14l-1 12H6L5 9zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"></path>
-            </svg>
+        <div class="store-brand-logo-container w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white overflow-hidden shrink-0">
+            @if(!empty($currentStore['logo_url']))
+                <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="w-full h-full object-cover">
+            @else
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M4 6V4h16v2H4zm1 3h14l-1 12H6L5 9zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"></path>
+                </svg>
+            @endif
         </div>
         <span class="font-bold text-lg text-slate-900 tracking-tight">
             UMKM<span class="text-blue-600">Go</span>
@@ -15,11 +19,17 @@
     <div class="flex items-center gap-4 sm:gap-6">
         <!-- Store Switcher Dropdown -->
         <button class="flex items-center gap-2 text-slate-700 hover:text-slate-900 font-medium text-sm transition-colors" type="button">
-            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-            <span class="hidden md:inline">{{ $currentStore['name'] ?? 'Toko Kopi & Fashion Andi' }}</span>
+            <div class="store-brand-logo-container w-5 h-5 rounded flex items-center justify-center overflow-hidden shrink-0">
+                @if(!empty($currentStore['logo_url']))
+                    <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="w-full h-full object-cover">
+                @else
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                @endif
+            </div>
+            <span class="hidden md:inline store-brand-name">{{ $currentStore['name'] ?? 'Toko Kopi & Fashion Andi' }}</span>
             <svg class="w-4 h-4 text-slate-400 ml-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="m6 9 6 6 6-6"></path>
             </svg>
