@@ -1,4 +1,4 @@
-<aside class="w-64 bg-[#0D1527] text-slate-400 flex flex-col flex-shrink-0 min-h-screen select-none border-r border-slate-800/40">
+<aside class="w-64 bg-[#0D1527] text-slate-400 flex flex-col flex-shrink-0 self-stretch min-h-screen select-none border-r border-slate-800/40">
     <!-- Brand Logo Area -->
     <div class="h-20 flex items-center px-6 gap-3">
         <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/30">
@@ -16,7 +16,7 @@
         Menu Utama
     </div>
 
-    <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+    <nav class="flex-1 px-3 space-y-1 pb-8">
         <!-- Active Item: Dashboard -->
         <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-semibold shadow-sm transition-all">
             <div class="flex items-center gap-3">

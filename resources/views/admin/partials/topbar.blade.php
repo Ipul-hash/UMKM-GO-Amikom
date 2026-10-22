@@ -1,4 +1,4 @@
-<header class="h-20 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30 flex-shrink-0">
+<header class="h-20 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between relative z-30 flex-shrink-0">
     <!-- Left Topbar Brand Icon -->
     <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">

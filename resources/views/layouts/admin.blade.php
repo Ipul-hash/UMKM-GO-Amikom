@@ -62,7 +62,7 @@
     <!-- END: Sidebar -->
 
     <!-- BEGIN: Main Viewport Wrapper -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <div class="flex-1 flex flex-col min-w-0">
 
         <!-- BEGIN: Topbar -->
         @include('admin.partials.topbar')
