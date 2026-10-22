@@ -1,15 +1,17 @@
 <aside class="w-64 bg-[#0D1527] text-slate-400 flex flex-col flex-shrink-0 self-stretch min-h-screen select-none border-r border-slate-800/40">
     <!-- Brand Logo Area -->
     <a href="{{ route('admin.dashboard') }}" class="h-20 flex items-center px-6 gap-3">
-        <div class="store-brand-logo-container w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/30 overflow-hidden shrink-0">
-            @if(!empty($currentStore['logo_url']))
-                <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="w-full h-full object-cover">
-            @else
+        @if(!empty($currentStore['logo_url']))
+            <div class="store-brand-logo-container flex items-center justify-center shrink-0 h-9 max-w-[120px]">
+                <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="h-9 w-auto max-w-full object-contain">
+            </div>
+        @else
+            <div class="store-brand-logo-container w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/30 overflow-hidden shrink-0">
                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                     <path d="M4 6V4h16v2H4zm1 3h14l-1 12H6L5 9zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"></path>
                 </svg>
-            @endif
-        </div>
+            </div>
+        @endif
         <div class="flex items-center text-white font-extrabold text-xl tracking-tight">
             UMKM<span class="text-blue-500">Go</span>
         </div>

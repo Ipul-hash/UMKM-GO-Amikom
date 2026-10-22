@@ -1,15 +1,17 @@
 <header class="h-20 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between relative z-30 flex-shrink-0">
     <!-- Left Topbar Brand Icon -->
     <div class="flex items-center gap-3">
-        <div class="store-brand-logo-container w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white overflow-hidden shrink-0">
-            @if(!empty($currentStore['logo_url']))
-                <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="w-full h-full object-cover">
-            @else
+        @if(!empty($currentStore['logo_url']))
+            <div class="store-brand-logo-container flex items-center justify-center shrink-0 h-8 max-w-[120px]">
+                <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="h-8 w-auto max-w-full object-contain">
+            </div>
+        @else
+            <div class="store-brand-logo-container w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white overflow-hidden shrink-0">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M4 6V4h16v2H4zm1 3h14l-1 12H6L5 9zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"></path>
                 </svg>
-            @endif
-        </div>
+            </div>
+        @endif
         <span class="font-bold text-lg text-slate-900 tracking-tight">
             UMKM<span class="text-blue-600">Go</span>
         </span>
@@ -19,9 +21,9 @@
     <div class="flex items-center gap-4 sm:gap-6">
         <!-- Store Switcher Dropdown -->
         <button class="flex items-center gap-2 text-slate-700 hover:text-slate-900 font-medium text-sm transition-colors" type="button">
-            <div class="store-brand-logo-container w-5 h-5 rounded flex items-center justify-center overflow-hidden shrink-0">
+            <div class="store-brand-logo-switcher flex items-center justify-center shrink-0">
                 @if(!empty($currentStore['logo_url']))
-                    <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="w-full h-full object-cover">
+                    <img src="{{ $currentStore['logo_url'] }}" alt="Logo" class="h-5 w-auto max-w-[28px] object-contain">
                 @else
                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>

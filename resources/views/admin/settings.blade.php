@@ -124,12 +124,12 @@
 
                         <!-- Store Logo Uploader Section -->
                         <div class="flex items-center gap-4 mb-7" data-purpose="store-logo-section">
-                            <div class="w-20 h-20 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center flex-shrink-0 text-slate-400 overflow-hidden relative shadow-sm">
+                            <div class="w-20 h-20 rounded-xl border border-dashed border-slate-200 bg-white flex items-center justify-center flex-shrink-0 text-slate-400 overflow-hidden relative shadow-sm p-1.5">
                                 <template x-if="(logoPreviewUrl || form.logo_url) && !logoError">
                                     <img :src="logoPreviewUrl || form.logo_url" 
                                          x-on:error="logoError = true"
                                          alt="Logo Toko" 
-                                         class="w-full h-full object-cover">
+                                         class="w-full h-full object-contain">
                                 </template>
                                 <template x-if="!logoPreviewUrl && (!form.logo_url || logoError)">
                                     <div class="flex flex-col items-center justify-center text-slate-400">
@@ -523,7 +523,11 @@ function settingsManagement() {
                     this.logoPreviewUrl = json.logo_url;
                     this.logoError = false;
                     document.querySelectorAll('.store-brand-logo-container').forEach(el => {
-                        el.innerHTML = `<img src="${json.logo_url}" alt="Logo" class="w-full h-full object-cover">`;
+                        el.className = 'store-brand-logo-container flex items-center justify-center shrink-0 h-8 max-w-[120px]';
+                        el.innerHTML = `<img src="${json.logo_url}" alt="Logo" class="h-8 w-auto max-w-full object-contain">`;
+                    });
+                    document.querySelectorAll('.store-brand-logo-switcher').forEach(el => {
+                        el.innerHTML = `<img src="${json.logo_url}" alt="Logo" class="h-5 w-auto max-w-[28px] object-contain">`;
                     });
                     this.showNotification('Logo toko berhasil diperbarui');
                 } else {
@@ -541,7 +545,11 @@ function settingsManagement() {
             this.logoPreviewUrl = '';
             this.logoError = false;
             document.querySelectorAll('.store-brand-logo-container').forEach(el => {
+                el.className = 'store-brand-logo-container w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0';
                 el.innerHTML = `<svg class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24"><path d="M4 6V4h16v2H4zm1 3h14l-1 12H6L5 9zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"></path></svg>`;
+            });
+            document.querySelectorAll('.store-brand-logo-switcher').forEach(el => {
+                el.innerHTML = `<svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`;
             });
             await this.saveSettings();
             this.showNotification('Logo toko berhasil dihapus');
