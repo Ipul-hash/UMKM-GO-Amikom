@@ -115,4 +115,37 @@ class MasterDataFrontendTest extends TestCase
         $response->assertSee('modalPoOpen', false);
         $response->assertSee('/api/v1/operasional/supplier', false);
     }
+
+    public function test_employees_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/employees');
+
+        $response->assertStatus(200);
+        $response->assertSee('karyawanManagement()', false);
+        $response->assertSee('showFormModal', false);
+        $response->assertSee('showShiftModal', false);
+        $response->assertSee('/api/v1/operasional/karyawan', false);
+    }
+
+    public function test_finance_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/finance');
+
+        $response->assertStatus(200);
+        $response->assertSee('financeManagement()', false);
+        $response->assertSee('showCreateModal', false);
+        $response->assertSee('showAllModal', false);
+        $response->assertSee('/api/v1/laporan/keuangan', false);
+    }
+
+    public function test_reports_page_renders_with_alpine_and_modals(): void
+    {
+        $response = $this->get('/admin/reports');
+
+        $response->assertStatus(200);
+        $response->assertSee('reportManagement()', false);
+        $response->assertSee('gradientOmzet', false);
+        $response->assertSee('/api/v1/laporan/penjualan', false);
+        $response->assertSee('/api/v1/laporan/penjualan/export-csv', false);
+    }
 }

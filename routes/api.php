@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\Laporan\KeuanganController;
+use App\Http\Controllers\Api\Laporan\LaporanController;
 use App\Http\Controllers\Api\MasterData\ProdukController;
 use App\Http\Controllers\Api\MasterData\StokController;
+use App\Http\Controllers\Api\Operasional\KaryawanController;
 use App\Http\Controllers\Api\Operasional\KasirController;
 use App\Http\Controllers\Api\Operasional\PelangganController;
 use App\Http\Controllers\Api\Operasional\PesanOnlineController;
@@ -73,5 +76,33 @@ Route::prefix('v1')->group(function () {
             Route::put('/{id}', [SupplierController::class, 'update']);
             Route::delete('/{id}', [SupplierController::class, 'destroy']);
         });
+
+        Route::prefix('karyawan')->group(function () {
+            Route::get('/', [KaryawanController::class, 'index']);
+            Route::post('/', [KaryawanController::class, 'store']);
+            Route::get('/shifts', [KaryawanController::class, 'shifts']);
+            Route::get('/{id}', [KaryawanController::class, 'show']);
+            Route::put('/{id}', [KaryawanController::class, 'update']);
+            Route::delete('/{id}', [KaryawanController::class, 'destroy']);
+            Route::post('/{id}/assign-shift', [KaryawanController::class, 'assignShift']);
+        });
+    });
+
+    Route::prefix('laporan')->group(function () {
+        Route::prefix('keuangan')->group(function () {
+            Route::get('/categories', [KeuanganController::class, 'categories']);
+            Route::get('/', [KeuanganController::class, 'index']);
+            Route::post('/', [KeuanganController::class, 'store']);
+            Route::get('/{id}', [KeuanganController::class, 'show']);
+            Route::put('/{id}', [KeuanganController::class, 'update']);
+            Route::delete('/{id}', [KeuanganController::class, 'destroy']);
+        });
+
+        Route::prefix('penjualan')->group(function () {
+            Route::get('/', [LaporanController::class, 'index']);
+            Route::get('/export-csv', [LaporanController::class, 'exportCsv']);
+        });
+
+        Route::get('/export-csv', [LaporanController::class, 'exportCsv']);
     });
 });
