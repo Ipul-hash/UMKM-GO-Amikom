@@ -124,32 +124,44 @@
 
                         <!-- Store Logo Uploader Section -->
                         <div class="flex items-center gap-4 mb-7" data-purpose="store-logo-section">
-                            <div class="w-20 h-20 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center flex-shrink-0 text-slate-400 overflow-hidden relative">
-                                <template x-if="form.logo_url">
-                                    <img :src="form.logo_url" alt="Logo Toko" class="w-full h-full object-cover">
+                            <div class="w-20 h-20 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center flex-shrink-0 text-slate-400 overflow-hidden relative shadow-sm">
+                                <template x-if="(logoPreviewUrl || form.logo_url) && !logoError">
+                                    <img :src="logoPreviewUrl || form.logo_url" 
+                                         x-on:error="logoError = true"
+                                         alt="Logo Toko" 
+                                         class="w-full h-full object-cover">
                                 </template>
-                                <template x-if="!form.logo_url">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                        <rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect>
-                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                        <polyline points="21 15 16 10 5 21"></polyline>
-                                        <line x1="16" x2="16" y1="5" y2="9"></line>
-                                        <line x1="14" x2="18" y1="7" y2="7"></line>
-                                    </svg>
+                                <template x-if="!logoPreviewUrl && (!form.logo_url || logoError)">
+                                    <div class="flex flex-col items-center justify-center text-slate-400">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                            <rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                            <line x1="16" x2="16" y1="5" y2="9"></line>
+                                            <line x1="14" x2="18" y1="7" y2="7"></line>
+                                        </svg>
+                                    </div>
                                 </template>
                             </div>
 
                             <div class="flex flex-col gap-1.5">
-                                <input type="file" x-ref="logoInput" @change="uploadLogo($event)" class="hidden" accept="image/*">
-                                <button @click="$refs.logoInput.click()" class="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-sm w-fit" type="button">
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="17 8 12 3 7 8"></polyline>
-                                        <line x1="12" x2="12" y1="3" y2="15"></line>
-                                    </svg>
-                                    <span x-text="uploadingLogo ? 'Mengunggah...' : 'Upload Logo Toko'"></span>
-                                </button>
-                                <span class="text-[11px] text-slate-400">JPG atau PNG. Maksimal 2 MB.</span>
+                                <input type="file" x-ref="logoInput" @change="uploadLogo($event)" class="hidden" accept="image/png,image/jpeg,image/webp">
+                                <div class="flex items-center gap-2">
+                                    <button @click="$refs.logoInput.click()" class="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-sm w-fit" type="button">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" x2="12" y1="3" y2="15"></line>
+                                        </svg>
+                                        <span x-text="uploadingLogo ? 'Mengunggah...' : 'Upload Logo Toko'"></span>
+                                    </button>
+                                    <template x-if="(form.logo_url || logoPreviewUrl) && !logoError">
+                                        <button @click="deleteLogo()" class="text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1">
+                                            Hapus Logo
+                                        </button>
+                                    </template>
+                                </div>
+                                <span class="text-[11px] text-slate-400">JPG, PNG atau WebP. Maksimal 2 MB.</span>
                             </div>
                         </div>
 
@@ -386,6 +398,8 @@ function settingsManagement() {
         activeTab: 'profil',
         loading: false,
         uploadingLogo: false,
+        logoPreviewUrl: '',
+        logoError: false,
         form: {
             id: null,
             name: '',
@@ -438,6 +452,7 @@ function settingsManagement() {
                 const json = await res.json();
                 if (json.success) {
                     this.form = json.data;
+                    this.logoError = false;
                 }
             } catch (err) {
                 console.error(err);
@@ -462,6 +477,7 @@ function settingsManagement() {
                 if (res.ok && json.success) {
                     this.showNotification(json.message);
                     this.form = json.data;
+                    this.logoError = false;
                 } else {
                     this.showNotification(json.message || 'Gagal menyimpan pengaturan', 'error');
                 }
@@ -475,6 +491,13 @@ function settingsManagement() {
         async uploadLogo(e) {
             const file = e.target.files[0];
             if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                this.logoPreviewUrl = event.target.result;
+                this.logoError = false;
+            };
+            reader.readAsDataURL(file);
 
             const formData = new FormData();
             formData.append('logo', file);
@@ -492,6 +515,8 @@ function settingsManagement() {
                 const json = await res.json();
                 if (res.ok && json.success) {
                     this.form.logo_url = json.logo_url;
+                    this.logoPreviewUrl = json.logo_url;
+                    this.logoError = false;
                     this.showNotification('Logo toko berhasil diperbarui');
                 } else {
                     this.showNotification(json.message || 'Gagal mengunggah logo', 'error');
@@ -502,6 +527,13 @@ function settingsManagement() {
             } finally {
                 this.uploadingLogo = false;
             }
+        },
+        async deleteLogo() {
+            this.form.logo_url = '';
+            this.logoPreviewUrl = '';
+            this.logoError = false;
+            await this.saveSettings();
+            this.showNotification('Logo toko berhasil dihapus');
         }
     };
 }
