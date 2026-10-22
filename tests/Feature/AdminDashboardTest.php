@@ -26,6 +26,11 @@ class AdminDashboardTest extends TestCase
             '/admin/orders' => 'Pesanan Online',
             '/admin/finance' => 'Keuangan',
             '/admin/customers' => 'Pelanggan',
+            '/admin/promo' => 'Promo',
+            '/admin/reports' => 'Laporan',
+            '/admin/employees' => 'Karyawan',
+            '/admin/suppliers' => 'Supplier',
+            '/admin/settings' => 'Pengaturan',
         ];
 
         foreach ($screens as $uri => $expectedText) {

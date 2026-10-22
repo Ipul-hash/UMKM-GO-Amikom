@@ -266,4 +266,44 @@ class DashboardController extends Controller
     {
         return view('admin.orders', $this->getSharedData());
     }
+
+    /**
+     * Display Promo & Diskon Screen.
+     */
+    public function promo(): View
+    {
+        return view('admin.promo', $this->getSharedData());
+    }
+
+    /**
+     * Display Reports / Laporan Penjualan Screen.
+     */
+    public function reports(): View
+    {
+        return view('admin.reports', $this->getSharedData());
+    }
+
+    /**
+     * Display Employees / Karyawan Screen.
+     */
+    public function employees(): View
+    {
+        return view('admin.employees', $this->getSharedData());
+    }
+
+    /**
+     * Display Suppliers / Pemasok Screen.
+     */
+    public function suppliers(): View
+    {
+        return view('admin.suppliers', $this->getSharedData());
+    }
+
+    /**
+     * Display Store Settings / Pengaturan Toko Screen.
+     */
+    public function settings(): View
+    {
+        return view('admin.settings', $this->getSharedData());
+    }
 }

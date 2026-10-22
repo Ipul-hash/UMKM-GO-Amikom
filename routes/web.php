@@ -13,4 +13,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/orders', [DashboardController::class, 'orders'])->name('orders');
     Route::get('/finance', [DashboardController::class, 'finance'])->name('finance');
     Route::get('/customers', [DashboardController::class, 'customers'])->name('customers');
+    Route::get('/promo', [DashboardController::class, 'promo'])->name('promo');
+    Route::get('/reports', [DashboardController::class, 'reports'])->name('reports');
+    Route::get('/employees', [DashboardController::class, 'employees'])->name('employees');
+    Route::get('/suppliers', [DashboardController::class, 'suppliers'])->name('suppliers');
+    Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
 });
