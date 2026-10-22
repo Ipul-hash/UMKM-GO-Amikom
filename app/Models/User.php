@@ -2,20 +2,60 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasUuids, Notifiable;
+
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'full_name',
+        'email',
+        'phone',
+        'password_hash',
+        'avatar_url',
+        'role',
+        'status',
+        'oauth_accounts',
+        'addresses',
+        'notification_prefs',
+        'reset_token_hash',
+        'reset_token_expires_at',
+        'email_verified_at',
+        'phone_verified_at',
+        'last_login_at',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password_hash',
+        'remember_token',
+        'reset_token_hash',
+    ];
+
+    /**
+     * Get the password column name for authentication.
+     */
+    public function getAuthPasswordName(): string
+    {
+        return 'password_hash';
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -26,7 +66,52 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'phone_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'reset_token_expires_at' => 'datetime',
+            'oauth_accounts' => 'array',
+            'addresses' => 'array',
+            'notification_prefs' => 'array',
         ];
+    }
+
+    public function stores(): HasMany
+    {
+        return $this->hasMany(Store::class, 'owner_user_id');
+    }
+
+    public function storeMemberships(): HasMany
+    {
+        return $this->hasMany(StoreMember::class, 'user_id');
+    }
+
+    public function devices(): HasMany
+    {
+        return $this->hasMany(UserDevice::class, 'user_id');
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'buyer_user_id');
+    }
+
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class, 'user_id');
+    }
+
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class, 'user_id');
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+
+    public function productFeedbacks(): HasMany
+    {
+        return $this->hasMany(ProductFeedback::class, 'user_id');
     }
 }

@@ -12,13 +12,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->uuid('id')->primary();
+            $table->string('full_name', 120);
+            $table->string('email', 255)->unique('idx_users_email');
+            $table->string('phone', 30)->nullable()->index('idx_users_phone');
+            $table->text('password_hash');
+            $table->text('avatar_url')->nullable();
+            $table->string('role', 20)->default('customer');
+            $table->string('status', 20)->default('active');
+            $table->json('oauth_accounts')->nullable();
+            $table->json('addresses')->nullable();
+            $table->json('notification_prefs')->nullable();
+            $table->string('reset_token_hash', 255)->nullable()->index('idx_users_reset_token');
+            $table->dateTime('reset_token_expires_at')->nullable();
+            $table->dateTime('email_verified_at')->nullable();
+            $table->dateTime('phone_verified_at')->nullable();
+            $table->dateTime('last_login_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            // High performance composite index
+            $table->index(['role', 'status'], 'idx_users_role_status');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -29,7 +43,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->uuid('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
@@ -42,8 +56,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };
