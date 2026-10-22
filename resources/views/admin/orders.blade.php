@@ -116,26 +116,40 @@
     </div>
 
     <!-- BEGIN: OrderListCards Container -->
-    <div class="space-y-3.5 relative min-h-[250px]" data-purpose="orders-list">
+    <div class="relative min-h-[250px]" data-purpose="orders-list">
         <!-- Loading Overlay -->
         <div x-show="loading" class="py-16 flex flex-col items-center justify-center text-slate-400">
             <svg class="animate-spin h-7 w-7 text-blue-600 mb-2" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
             <span class="text-xs font-medium">Memuat daftar pesanan...</span>
         </div>
 
-        <!-- Dynamic Order Cards -->
-        <template x-for="order in orders" :key="order.id">
-            <div class="bg-white border border-slate-200/90 rounded-2xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-xs hover:border-blue-200 transition-all">
-                <!-- Left: Product Image & Order Info -->
-                <div class="flex items-center gap-3.5 w-full lg:w-[280px]">
-                    <img :src="order.thumbnail" 
-                         :alt="order.order_number" 
-                         class="w-13 h-13 rounded-xl object-cover flex-shrink-0 border border-slate-100 bg-slate-50"
-                         onerror="this.src='/images/dashboard/coffee-americano.jpg'"/>
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-slate-900 text-sm" x-text="order.order_number"></span>
-                            <span class="text-xs font-semibold"
+        <div class="overflow-x-auto pb-3 -mx-2 px-2">
+            <div class="min-w-[980px] space-y-3.5">
+                <!-- Dynamic Order Cards -->
+                <template x-for="order in orders" :key="order.id">
+                    <div class="bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-xs hover:border-blue-200 transition-all">
+                        <!-- 1. Left: Product Image & Order Info -->
+                        <div class="flex items-center gap-3.5 w-[250px] flex-shrink-0">
+                            <img :src="order.thumbnail" 
+                                 :alt="order.order_number" 
+                                 class="w-12 h-12 rounded-xl object-cover flex-shrink-0 border border-slate-100 bg-slate-50"
+                                 onerror="this.src='/images/dashboard/coffee-americano.jpg'"/>
+                            <div class="min-w-0">
+                                <span class="block font-bold text-slate-900 text-sm font-mono tracking-tight whitespace-nowrap" x-text="order.order_number"></span>
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium mt-1 truncate">
+                                    <span x-text="order.courier"></span>
+                                    <template x-if="order.tracking_number">
+                                        <span class="font-mono text-[11px] text-slate-400 font-semibold" x-text="'(' + order.tracking_number + ')'"></span>
+                                    </template>
+                                </div>
+                                <span class="block text-[11px] text-slate-400 mt-0.5 whitespace-nowrap" x-text="order.placed_at"></span>
+                            </div>
+                        </div>
+
+                        <!-- 2. Status Column -->
+                        <div class="w-[120px] flex-shrink-0">
+                            <span class="block text-[11px] text-slate-400 font-medium">Status</span>
+                            <span class="block text-xs font-bold mt-0.5 whitespace-nowrap"
                                   :class="{
                                       'text-emerald-600': order.status === 'pending' || order.status === 'paid',
                                       'text-blue-600': order.status === 'processing',
@@ -145,93 +159,87 @@
                                   }"
                                   x-text="order.status_badge?.label"></span>
                         </div>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium mt-1 truncate">
-                            <span x-text="order.courier"></span>
-                            <template x-if="order.tracking_number">
-                                <span class="font-mono text-[11px] text-slate-600 font-semibold" x-text="'(' + order.tracking_number + ')'"></span>
+
+                        <!-- 3. Items Ordered Summary -->
+                        <div class="w-[240px] flex-shrink-0">
+                            <span class="block text-[11px] text-slate-400 font-medium">Item Pesanan:</span>
+                            <p class="text-xs font-medium text-slate-700 line-clamp-2 mt-0.5" x-text="order.items_summary"></p>
+                        </div>
+
+                        <!-- 4. Customer Name -->
+                        <div class="w-[140px] flex-shrink-0">
+                            <span class="block text-[11px] text-slate-400 font-medium">Pembeli</span>
+                            <p class="text-xs font-bold text-slate-900 leading-tight mt-0.5 truncate" x-text="order.buyer_name"></p>
+                            <span class="text-[11px] text-slate-400 font-mono block" x-text="order.buyer_phone"></span>
+                        </div>
+
+                        <!-- 5. Total Price -->
+                        <div class="w-[120px] flex-shrink-0">
+                            <span class="block text-[11px] text-slate-400 font-medium">Total Tagihan</span>
+                            <p class="text-sm font-extrabold text-slate-900 leading-tight mt-0.5 whitespace-nowrap" x-text="order.total_formatted"></p>
+                        </div>
+
+                        <!-- 6. Actions Based on Status -->
+                        <div class="flex items-center gap-2 flex-shrink-0 justify-end w-[180px]">
+                            <!-- STATUS: NEW / PENDING / PAID -->
+                            <template x-if="order.status === 'pending' || order.status === 'paid'">
+                                <div class="flex items-center gap-2 w-full justify-end">
+                                    <button @click="openCancelModal(order)" 
+                                            type="button" 
+                                            class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition-colors">
+                                        Tolak
+                                    </button>
+                                    <button @click="acceptOrder(order)" 
+                                            type="button" 
+                                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-semibold text-white shadow-xs transition-colors whitespace-nowrap">
+                                        Terima &amp; Proses
+                                    </button>
+                                </div>
+                            </template>
+
+                            <!-- STATUS: PROCESSING -->
+                            <template x-if="order.status === 'processing'">
+                                <div class="w-full">
+                                    <button @click="openShipModal(order)" 
+                                            type="button" 
+                                            class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-semibold text-white shadow-xs transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span>Kirim Pesanan (Resi)</span>
+                                    </button>
+                                </div>
+                            </template>
+
+                            <!-- STATUS: SHIPPED -->
+                            <template x-if="order.status === 'shipped'">
+                                <div class="flex items-center gap-2 w-full justify-end">
+                                    <button @click="completeOrder(order)" 
+                                            type="button" 
+                                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-xs font-semibold text-white shadow-xs transition-colors whitespace-nowrap">
+                                        Tandai Selesai
+                                    </button>
+                                    <button @click="openDetailModal(order)" 
+                                            type="button" 
+                                            class="px-3 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition-colors">
+                                        Detail
+                                    </button>
+                                </div>
+                            </template>
+
+                            <!-- STATUS: DELIVERED OR CANCELLED -->
+                            <template x-if="order.status === 'delivered' || order.status === 'cancelled'">
+                                <div class="w-full flex justify-end">
+                                    <button @click="openDetailModal(order)" 
+                                            type="button" 
+                                            class="px-5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap">
+                                        Lihat Detail
+                                    </button>
+                                </div>
                             </template>
                         </div>
                     </div>
-                </div>
-
-                <!-- Items Ordered Summary -->
-                <div class="w-full lg:w-[240px]">
-                    <span class="block text-[11px] text-slate-400 font-medium">Item Pesanan:</span>
-                    <p class="text-xs font-medium text-slate-700 line-clamp-2 mt-0.5" x-text="order.items_summary"></p>
-                </div>
-
-                <!-- Customer Name -->
-                <div class="w-full lg:w-[140px]">
-                    <span class="block text-[11px] text-slate-400 font-medium">Pembeli</span>
-                    <p class="text-xs font-bold text-slate-900 leading-tight mt-0.5 truncate" x-text="order.buyer_name"></p>
-                    <span class="text-[11px] text-slate-400 font-mono" x-text="order.buyer_phone"></span>
-                </div>
-
-                <!-- Total Price -->
-                <div class="w-full lg:w-[130px]">
-                    <span class="block text-[11px] text-slate-400 font-medium">Total Tagihan</span>
-                    <p class="text-sm font-extrabold text-slate-900 leading-tight mt-0.5" x-text="order.total_formatted"></p>
-                </div>
-
-                <!-- Actions Based on Status -->
-                <div class="flex items-center gap-2 flex-wrap lg:flex-nowrap justify-end">
-                    <!-- STATUS: NEW / PENDING / PAID -->
-                    <template x-if="order.status === 'pending' || order.status === 'paid'">
-                        <div class="flex items-center gap-2">
-                            <button @click="openCancelModal(order)" 
-                                    type="button" 
-                                    class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition-colors">
-                                Tolak
-                            </button>
-                            <button @click="acceptOrder(order)" 
-                                    type="button" 
-                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-semibold text-white shadow-xs transition-colors">
-                                Terima &amp; Proses
-                            </button>
-                        </div>
-                    </template>
-
-                    <!-- STATUS: PROCESSING -->
-                    <template x-if="order.status === 'processing'">
-                        <div class="flex items-center gap-2">
-                            <button @click="openShipModal(order)" 
-                                    type="button" 
-                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-semibold text-white shadow-xs transition-colors flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span>Kirim Pesanan (Input Resi)</span>
-                            </button>
-                        </div>
-                    </template>
-
-                    <!-- STATUS: SHIPPED -->
-                    <template x-if="order.status === 'shipped'">
-                        <div class="flex items-center gap-2">
-                            <button @click="completeOrder(order)" 
-                                    type="button" 
-                                    class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-xs font-semibold text-white shadow-xs transition-colors">
-                                Tandai Selesai
-                            </button>
-                            <button @click="openDetailModal(order)" 
-                                    type="button" 
-                                    class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition-colors">
-                                Detail
-                            </button>
-                        </div>
-                    </template>
-
-                    <!-- STATUS: DELIVERED OR CANCELLED -->
-                    <template x-if="order.status === 'delivered' || order.status === 'cancelled'">
-                        <div>
-                            <button @click="openDetailModal(order)" 
-                                    type="button" 
-                                    class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition-colors">
-                                Lihat Detail
-                            </button>
-                        </div>
-                    </template>
-                </div>
+                </template>
             </div>
-        </template>
+        </div>
 
         <!-- Empty Results State -->
         <div x-show="!loading && orders.length === 0" class="py-16 text-center bg-white rounded-2xl border border-slate-200">
