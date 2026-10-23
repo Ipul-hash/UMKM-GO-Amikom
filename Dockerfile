@@ -37,12 +37,12 @@ COPY . .
 # Copy compiled frontend assets from node_builder
 COPY --from=node_builder /app/public/build ./public/build
 
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize --no-dev --ignore-platform-reqs
 
 # ------------------------------------------
-# Stage 3: Production Runtime (PHP 8.3 Apache)
+# Stage 3: Production Runtime (PHP 8.4 Apache)
 # ------------------------------------------
-FROM php:8.3-apache AS runner
+FROM php:8.4-apache AS runner
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
