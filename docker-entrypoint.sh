@@ -64,6 +64,13 @@ php artisan storage:link || true
 if [ "${RUN_MIGRATIONS}" = "true" ] || [ "${AUTO_MIGRATE}" = "true" ]; then
     echo "[Render Entrypoint] Running database migrations..."
     php artisan migrate --force || echo "[Render Entrypoint] Warning: Migration failed. Check your database connection settings."
+
+    # Auto-seed initial store and accounts if users table is empty
+    USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::count();" 2>/dev/null || echo "1")
+    if [ "${USER_COUNT}" = "0" ] || [ "${RUN_SEEDER}" = "true" ]; then
+        echo "[Render Entrypoint] Initializing store data and default accounts..."
+        php artisan db:seed --force || echo "[Render Entrypoint] Warning: Seeding failed."
+    fi
 fi
 
 # Optimization caches for production
