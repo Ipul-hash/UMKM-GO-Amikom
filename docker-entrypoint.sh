@@ -25,6 +25,12 @@ if [ -n "${DB_USERNAME}" ]; then
     export DB_USERNAME="${CLEAN_DB_USERNAME}"
 fi
 
+# Auto-enable SSL/TLS CA for secure cloud databases (TiDB, Aiven, etc.)
+if [ -z "${MYSQL_ATTR_SSL_CA}" ] && [ -f "/etc/ssl/certs/ca-certificates.crt" ]; then
+    echo "[Render Entrypoint] Enabling SSL CA for database connection (/etc/ssl/certs/ca-certificates.crt)..."
+    export MYSQL_ATTR_SSL_CA="/etc/ssl/certs/ca-certificates.crt"
+fi
+
 # Ensure storage directories exist
 mkdir -p /var/www/html/storage/logs \
          /var/www/html/storage/framework/sessions \
