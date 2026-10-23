@@ -49,6 +49,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     unzip \
+    ca-certificates \
     libpq-dev \
     libzip-dev \
     libpng-dev \
